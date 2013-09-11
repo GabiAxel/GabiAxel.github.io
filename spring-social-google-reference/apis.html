@@ -1,0 +1,225 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>3.&nbsp;Google APIs Binding</title><link rel="stylesheet" href="css/manual-multipage.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.2"><link rel="home" href="index.html" title="Spring Social Google Reference Manual"><link rel="up" href="index.html" title="Spring Social Google Reference Manual"><link rel="prev" href="connecting.html" title="2.&nbsp;Configuring Google Connectivity"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">3.&nbsp;Google APIs Binding</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="connecting.html">Prev</a>&nbsp;</td><th width="60%" align="center">&nbsp;</th><td width="20%" align="right">&nbsp;</td></tr></table><hr></div><div class="chapter" title="3.&nbsp;Google APIs Binding"><div class="titlepage"><div><div><h2 class="title"><a name="apis"></a>3.&nbsp;Google APIs Binding</h2></div></div></div>
+	
+	<p>Spring Social Google's <code class="interfacename">
+	Google</code> interface and its implementation, <code class="classname">
+	GoogleTemplate</code> provide the operations needed to interact 
+	with Google on behalf of a user. Creating an instance of <code class="classname">
+	GoogleTemplate</code> is as simple as constructing it by passing 
+	in an authorized access token to the constructor:</p>
+	<pre class="programlisting">
+String accessToken = <span class="hl-string">"f8FX29g..."</span>; <span class="hl-comment">// access token received from Google after OAuth2 authorization</span>
+Google google = <span class="hl-keyword">new</span> GoogleTemplate(accessToken);
+	</pre>
+	<p>In addition, <code class="classname">GoogleTemplate</code> has a default 
+	constructor that creates an instance without any OAuth2 
+	credentials:</p>
+	<pre class="programlisting">
+Google google = <span class="hl-keyword">new</span> GoogleTemplate();
+	</pre>
+	<p>When constructed with the default constructor, <code class="classname">
+	GoogleTemplate</code> will allow a few Google+ operations that do 
+	not require authorization, such as retrieving a specific Google+ 
+	user's profile. Attempting other operations, such as creating an 
+	app activity will fail with an <code class="classname">
+	MissingAuthorizationException</code> being thrown.</p>
+	<p>If you are using Spring Social's 
+	<a class="ulink" href="http://static.springsource.org/spring-social/docs/1.1.x/reference/html/serviceprovider.html" target="_top">
+	service provider framework</a> , you can get an instance of 
+	<code class="interfacename">Google</code> from a <code class="interfacename">
+	Connection</code> . For example, the following snippet calls 
+	<code class="methodname">getApi()</code> on a connection to retrieve a 
+	<code class="interfacename">Google</code> :</p>
+	<pre class="programlisting">
+Connection&lt;Google&gt; connection = connectionRepository.findPrimaryConnection(Google.<span class="hl-keyword">class</span>);
+Google google = connection != null ? connection.getApi() : <span class="hl-keyword">new</span> GoogleTemplate();
+	</pre>
+	<p>Here, <code class="interfacename">ConnectionRepository</code> is 
+	being asked for the primary connection that the current user has with 
+	Google. If a connection to Google is found, a call to <code class="methodname">
+	getApi()</code> retrieves a <code class="interfacename">
+	Google</code> instance that is configured with the connection 
+	details received when the connection was first established. If there 
+	is no connection, a default instance of <code class="classname">
+	GoogleTemplate</code> is created.</p>
+	<p>With a <code class="interfacename">Google</code> in hand, there are 
+	several ways you can use it to interact with Google on behalf of the 
+	user. Spring Social's Google API binding is divided into 4 
+	sub-APIs exposes through the methods of <code class="interfacename">
+	Google</code> , and a method that lets you fetch the access 
+	token to easily integrate with other Java libraries for Google APIs 
+	that have no Spring Social binding yet:</p>
+	<pre class="programlisting">
+<span class="hl-keyword">public</span> <span class="hl-keyword">interface</span> Google {
+
+    UserInfoOperations userOperations();
+
+    PlusOperations plusOperations();
+
+    TaskOperations taskOperations();
+
+    DriveOperations driveOperations();
+
+	String getAccessToken();
+
+}
+	</pre>
+	<p>The sub-API interfaces returned from <code class="interfacename">
+	Google</code> 's methods are described in 
+	<a class="xref" href="apis.html#table-google-sub-apis" title="Table&nbsp;3.1.&nbsp;Google's Sub-APIs">Table&nbsp;3.1, &#8220;Google's Sub-APIs&#8221;</a> .</p>
+	<div class="table"><a name="table-google-sub-apis"></a><p class="title"><b>Table&nbsp;3.1.&nbsp;Google's Sub-APIs</b></p><div class="table-contents">
+		
+		<table summary="Google's Sub-APIs" style="border-collapse: collapse;border-top: 0.5pt solid ; border-bottom: 0.5pt solid ; border-left: 0.5pt solid ; border-right: 0.5pt solid ; "><colgroup><col align="left"><col></colgroup><thead><tr><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="center">Sub-API Interface</th><th style="border-bottom: 0.5pt solid ; " align="center">Description</th></tr></thead><tbody><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left">UserInfoOperations</td><td style="border-bottom: 0.5pt solid ; ">Get the details of the user.</td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left">PlusOperations</td><td style="border-bottom: 0.5pt solid ; ">Read Google+ activities and people profiles and create app 
+					activities.</td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left">TaskOperations</td><td style="border-bottom: 0.5pt solid ; ">Read and manage the user's tasks.</td></tr><tr><td style="border-right: 0.5pt solid ; " align="left">DriveOperations</td><td style="">Read and manage the user's files in Google 
+					Drive.</td></tr></tbody></table>
+	</div></div><br class="table-break">
+	<p>The following sections will give an overview of common tasks 
+	that can be performed via <code class="interfacename">Google</code> and 
+	its sub-APIs. For complete details on all of the operations available, 
+	refer to the JavaDoc.</p>
+	<div class="section" title="3.1&nbsp;Getting the authenticated user's details"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="google-userinfo"></a>3.1&nbsp;Getting the authenticated user's details</h2></div></div></div>
+		
+		<p>You can retrieve the user's details using <code class="methodname">
+		getUserProfile()</code> method:</p>
+		<pre class="programlisting">
+GoogleUserInfo userInfo = google.userOperations().getUserInfo();
+		</pre>
+		<p>The <code class="classname">UserInfo</code> object will contain basic 
+		profile information about the authenticating user, including their 
+		first and last name and their Google profile ID. Depending on what 
+		authorization scope has been granted to the application, it may also 
+		include their email address.</p>
+	</div>
+	<div class="section" title="3.2&nbsp;Reading Google+ Profiles"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="google-people"></a>3.2&nbsp;Reading Google+ Profiles</h2></div></div></div>
+		
+		<p>If you know a user's Google profile ID, you can get their 
+		public profile by calling <code class="methodname">getPerson()</code>:</p>
+		<pre class="programlisting">
+Person person =	google.plusOperations().getPerson(<span class="hl-string">"123456789..."</span>);
+		</pre>
+		<p>This operation works without authentication, as it is used to 
+		access public profiles. After authentication, it is possible to use 
+		"me" instead of a profile ID as argument to the method, or 
+		equivalently use the <code class="methodname">getGoogleProfile()</code> 
+		method to get the authenticated user's profile.</p>
+		<p>To search for public profiles, call the <code class="methodname">
+		searchPeople()</code> method:</p>
+		<pre class="programlisting">
+PeoplePage people = google.plusOperations().searchPeople(<span class="hl-string">"John Smith"</span>, null);
+		</pre>
+		<p>Or you can get a list of people in the user's circles by 
+		calling <code class="methodname">getPeopleInCircles()</code> :</p>
+		<pre class="programlisting">
+PeoplePage people = google.plusOperations().getPeopleInCircles(<span class="hl-string">"me"</span>, null);
+		</pre>
+	</div>
+	<div class="section" title="3.3&nbsp;Reading Google+ Activities"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="google-activities"></a>3.3&nbsp;Reading Google+ Activities</h2></div></div></div>
+		
+		<p>To get a user's visible activities, call <code class="interfacename">
+		PlusOperations</code> ' <code class="methodname">
+		getActivities()</code> method with the user ID as first 
+		argument, or "me" for the authenticated user:</p>
+		<pre class="programlisting">
+ActivitiesPage activities = google.plusOperations().getActivities(<span class="hl-string">"123456789..."</span>);
+		</pre>
+		<p>You can search all public activities without authenticating by 
+		calling the <code class="methodname">searchPublicActivities()</code> 
+		methos:</p>
+		<pre class="programlisting">
+ActivitiesPage activities = google.plusOperations().searchPublicActivities(<span class="hl-string">"Spring"</span>, null);
+		</pre>
+	</div>
+	<div class="section" title="3.4&nbsp;Managing app activities"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="google-moments"></a>3.4&nbsp;Managing app activities</h2></div></div></div>
+		
+		<p>Google+ App activities, or moments, appear in the profile page, 
+		and are associated with the application that was used to create them. 
+		<code class="interfacename">Moment</code> is an abstract superclass of 
+		the specific types of app activities. To post a new app activity, 
+		call <code class="methodname">insertMoment()</code> with a specific moment 
+		implementation:</p>
+		<pre class="programlisting">
+Moment moment = google.plusOperations().insertMoment(<span class="hl-keyword">new</span> AddActivity(<span class="hl-string">"http://target-url..."</span>));
+		</pre>
+		<p>You can list the moments created by your application by calling 
+		<code class="methodname">getMoments()</code>:</p>
+		<pre class="programlisting">
+MomentsPage moments = google.plusOperations().getMoments(null);
+		</pre>
+		<p>To delete a moment, call <code class="methodname">
+		deleteMoment()</code> with the ID which you can fetch from the 
+		moment instance:</p>
+		<pre class="programlisting">
+google.plusOperations().deleteMoment(<span class="hl-string">"mf4l2j3ws..."</span>);
+		</pre>
+	</div>
+	<div class="section" title="3.5&nbsp;Managing Tasks"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="google-tasks"></a>3.5&nbsp;Managing Tasks</h2></div></div></div>
+		
+		<p>Depending on the OAuth2 scope, you can access the Google Tasks 
+		API either with full access or with read-only access. Tasks are 
+		organizad in task lists, and the default task list's ID is 
+		"@default". To retrieve the user's task lists, call 
+		the <code class="methodname">getTaskLists()</code> method:</p>
+		<pre class="programlisting">
+TaskListsPage taskLists = google.taskOperations().getTaskLists();
+		</pre>
+		<p>Create a new task list or update an existing one by calling 
+		<code class="methodname">saveTaskList()</code>:</p>
+		<pre class="programlisting">
+TaskList taskList = google.taskOperations().saveTaskList(<span class="hl-keyword">new</span> TaskList(<span class="hl-string">"Todo"</span>));
+		</pre>
+		<p>To retrieve the tasks, call <code class="methodname">
+		getTasks()</code>:</p>
+		<pre class="programlisting">
+TasksPage tasks = google.taskOperations().getTasks();
+		</pre>
+		<p>Create or update a task by calling <code class="methodname">
+		saveTask()</code>:</p>
+		<pre class="programlisting">
+Task task = google.taskOperations().saveTask(<span class="hl-keyword">new</span> Task(<span class="hl-string">"Do or do not"</span>, <span class="hl-string">"There is no try"</span>, <span class="hl-keyword">new</span> Date()));
+		</pre>
+		<p>If you want to hide all completed tasks in a task list, call 
+		<code class="methodname">clearCompletedTasks()</code>:</p>
+		<pre class="programlisting">
+TaskList taskList = ... <span class="hl-comment">// get or create the task list instance</span>
+google.taskOperations().clearCompletedTasks(taskList);
+		</pre>
+	</div>
+	<div class="section" title="3.6&nbsp;Managing files in Google Drive"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="google-drive"></a>3.6&nbsp;Managing files in Google Drive</h2></div></div></div>
+		
+		<p>Google Drive API can be used to upload, manage and download 
+		files. Applications can be granted read/write or read-only access to 
+		the entire content of the user's Google Drive account, to file 
+		metadata, or just to files created by the application.</p>
+		<p>To list the visible files and folders in a folder, call 
+		<code class="methodname">getFiles()</code> with the folder ID, or 
+		"root" to get top-level files and folders:</p>
+		<pre class="programlisting">
+DriveFilesPage files = google.driveOperations().getFiles(<span class="hl-string">"root"</span>, null);
+		</pre>
+		<p>Create a folder by calling <code class="methodname">
+		createFolder()</code> with the folder ID in which to create the 
+		new folder and a name:</p>
+		<pre class="programlisting">
+DriveFile folder = google.driveOperations().createFolder(<span class="hl-string">"root"</span>, <span class="hl-string">"New Folder"</span>);
+		</pre>
+		<p>Uploading files is implemented using Spring's resource 
+		abstraction. When you upload a file, you also define its metadata 
+		(name, description, etc') and upload parameters (whether to 
+		convert office files, whether to run OCR, etc'). To upload a 
+		file call the <code class="methodname">upload()</code> method:</p>
+		<pre class="programlisting">
+Resource resource = <span class="hl-keyword">new</span> FileSystemResource(<span class="hl-string">"/path/to/file"</span>);  <span class="hl-comment">// any Resource implementation can be used</span>
+DriveFile metadata = DriveFile.builder()  <span class="hl-comment">// use this builder to set metadata</span>
+                         .setTitle(<span class="hl-string">"My File"</span>)
+                         .build();
+UploadParameters parameters = <span class="hl-keyword">new</span> UploadParameters();  <span class="hl-comment">// call setters to modify upload parameters</span>
+DriveFile file = google.driveOperations().upload(resource, metadata, parameters);
+		</pre>
+		<p>Downloading files also uses the resource abstraction. Call the <code class="methodname">downloadFile()</code> Method
+		with either the file ID or the file metadata instance to get a Resource for the file:</p>
+		<pre class="programlisting">
+Resource resource = google.driveOperations().downloadFile(<span class="hl-string">"NX01..."</span>);
+		</pre>
+	</div>
+</div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="connecting.html">Prev</a>&nbsp;</td><td width="20%" align="center">&nbsp;</td><td width="40%" align="right">&nbsp;</td></tr><tr><td width="40%" align="left" valign="top">2.&nbsp;Configuring Google Connectivity&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;</td></tr></table></div></body></html>
