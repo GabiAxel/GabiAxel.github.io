@@ -53,15 +53,13 @@ Google google = connection != null ? connection.getApi() : <span class="hl-keywo
 	<pre class="programlisting">
 <span class="hl-keyword">public</span> <span class="hl-keyword">interface</span> Google {
 
-    UserInfoOperations userOperations();
-
     PlusOperations plusOperations();
 
     TaskOperations taskOperations();
 
     DriveOperations driveOperations();
-
-	String getAccessToken();
+    
+    String getAccessToken();
 
 }
 	</pre>
@@ -70,7 +68,7 @@ Google google = connection != null ? connection.getApi() : <span class="hl-keywo
 	<a class="xref" href="apis.html#table-google-sub-apis" title="Table&nbsp;3.1.&nbsp;Google's Sub-APIs">Table&nbsp;3.1, &#8220;Google's Sub-APIs&#8221;</a> .</p>
 	<div class="table"><a name="table-google-sub-apis"></a><p class="title"><b>Table&nbsp;3.1.&nbsp;Google's Sub-APIs</b></p><div class="table-contents">
 		
-		<table summary="Google's Sub-APIs" style="border-collapse: collapse;border-top: 0.5pt solid ; border-bottom: 0.5pt solid ; border-left: 0.5pt solid ; border-right: 0.5pt solid ; "><colgroup><col align="left"><col></colgroup><thead><tr><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="center">Sub-API Interface</th><th style="border-bottom: 0.5pt solid ; " align="center">Description</th></tr></thead><tbody><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left">UserInfoOperations</td><td style="border-bottom: 0.5pt solid ; ">Get the details of the user.</td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left">PlusOperations</td><td style="border-bottom: 0.5pt solid ; ">Read Google+ activities and people profiles and create app 
+		<table summary="Google's Sub-APIs" style="border-collapse: collapse;border-top: 0.5pt solid ; border-bottom: 0.5pt solid ; border-left: 0.5pt solid ; border-right: 0.5pt solid ; "><colgroup><col align="left"><col></colgroup><thead><tr><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="center">Sub-API Interface</th><th style="border-bottom: 0.5pt solid ; " align="center">Description</th></tr></thead><tbody><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left">PlusOperations</td><td style="border-bottom: 0.5pt solid ; ">Read Google+ activities and people profiles and create app 
 					activities.</td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left">TaskOperations</td><td style="border-bottom: 0.5pt solid ; ">Read and manage the user's tasks.</td></tr><tr><td style="border-right: 0.5pt solid ; " align="left">DriveOperations</td><td style="">Read and manage the user's files in Google 
 					Drive.</td></tr></tbody></table>
 	</div></div><br class="table-break">
@@ -78,20 +76,7 @@ Google google = connection != null ? connection.getApi() : <span class="hl-keywo
 	that can be performed via <code class="interfacename">Google</code> and 
 	its sub-APIs. For complete details on all of the operations available, 
 	refer to the JavaDoc.</p>
-	<div class="section" title="3.1&nbsp;Getting the authenticated user's details"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="google-userinfo"></a>3.1&nbsp;Getting the authenticated user's details</h2></div></div></div>
-		
-		<p>You can retrieve the user's details using <code class="methodname">
-		getUserProfile()</code> method:</p>
-		<pre class="programlisting">
-GoogleUserInfo userInfo = google.userOperations().getUserInfo();
-		</pre>
-		<p>The <code class="classname">UserInfo</code> object will contain basic 
-		profile information about the authenticating user, including their 
-		first and last name and their Google profile ID. Depending on what 
-		authorization scope has been granted to the application, it may also 
-		include their email address.</p>
-	</div>
-	<div class="section" title="3.2&nbsp;Reading Google+ Profiles"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="google-people"></a>3.2&nbsp;Reading Google+ Profiles</h2></div></div></div>
+	<div class="section" title="3.1&nbsp;Reading Google+ Profiles"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="google-people"></a>3.1&nbsp;Reading Google+ Profiles</h2></div></div></div>
 		
 		<p>If you know a user's Google profile ID, you can get their 
 		public profile by calling <code class="methodname">getPerson()</code>:</p>
@@ -114,7 +99,7 @@ PeoplePage people = google.plusOperations().searchPeople(<span class="hl-string"
 PeoplePage people = google.plusOperations().getPeopleInCircles(<span class="hl-string">"me"</span>, null);
 		</pre>
 	</div>
-	<div class="section" title="3.3&nbsp;Reading Google+ Activities"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="google-activities"></a>3.3&nbsp;Reading Google+ Activities</h2></div></div></div>
+	<div class="section" title="3.2&nbsp;Reading Google+ Activities"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="google-activities"></a>3.2&nbsp;Reading Google+ Activities</h2></div></div></div>
 		
 		<p>To get a user's visible activities, call <code class="interfacename">
 		PlusOperations</code> ' <code class="methodname">
@@ -130,7 +115,7 @@ ActivitiesPage activities = google.plusOperations().getActivities(<span class="h
 ActivitiesPage activities = google.plusOperations().searchPublicActivities(<span class="hl-string">"Spring"</span>, null);
 		</pre>
 	</div>
-	<div class="section" title="3.4&nbsp;Managing app activities"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="google-moments"></a>3.4&nbsp;Managing app activities</h2></div></div></div>
+	<div class="section" title="3.3&nbsp;Managing app activities"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="google-moments"></a>3.3&nbsp;Managing app activities</h2></div></div></div>
 		
 		<p>Google+ App activities, or moments, appear in the profile page, 
 		and are associated with the application that was used to create them. 
@@ -153,7 +138,7 @@ MomentsPage moments = google.plusOperations().getMoments(null);
 google.plusOperations().deleteMoment(<span class="hl-string">"mf4l2j3ws..."</span>);
 		</pre>
 	</div>
-	<div class="section" title="3.5&nbsp;Managing Tasks"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="google-tasks"></a>3.5&nbsp;Managing Tasks</h2></div></div></div>
+	<div class="section" title="3.4&nbsp;Managing Tasks"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="google-tasks"></a>3.4&nbsp;Managing Tasks</h2></div></div></div>
 		
 		<p>Depending on the OAuth2 scope, you can access the Google Tasks 
 		API either with full access or with read-only access. Tasks are 
@@ -185,7 +170,7 @@ TaskList taskList = ... <span class="hl-comment">// get or create the task list 
 google.taskOperations().clearCompletedTasks(taskList);
 		</pre>
 	</div>
-	<div class="section" title="3.6&nbsp;Managing files in Google Drive"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="google-drive"></a>3.6&nbsp;Managing files in Google Drive</h2></div></div></div>
+	<div class="section" title="3.5&nbsp;Managing files in Google Drive"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="google-drive"></a>3.5&nbsp;Managing files in Google Drive</h2></div></div></div>
 		
 		<p>Google Drive API can be used to upload, manage and download 
 		files. Applications can be granted read/write or read-only access to 

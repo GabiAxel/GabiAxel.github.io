@@ -10,8 +10,6 @@ org.springframework.social.google.api.query
 org.springframework.social.google.api.query.impl
 org.springframework.social.google.api.tasks
 org.springframework.social.google.api.tasks.impl
-org.springframework.social.google.api.userinfo
-org.springframework.social.google.api.userinfo.impl
 org.springframework.social.google.config.support
 org.springframework.social.google.config.xml
 org.springframework.social.google.connect
